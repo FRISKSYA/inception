@@ -1,33 +1,24 @@
 FROM debian:bullseye
 
-# Install MariaDB and essential packages
-RUN apt-get update && \
-    apt-get install -y mariadb-server && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# システムのアップデートとMariaDBのインストール
+RUN apt-get update && apt-get install -y \
+    mariadb-server \
+    && rm -rf /var/lib/apt/lists/*
 
-# Environment variables
-ENV MYSQL_ROOT_PASSWORD=''
-ENV MYSQL_DATABASE=''
-ENV MYSQL_USER=''
-ENV MYSQL_PASSWORD=''
-
-# Copy configuration file
+# MariaDB設定ファイルのコピー
 COPY ./conf/my.cnf /etc/mysql/my.cnf
 
-# Copy initialization script
-COPY ./tools/init_db.sh /docker-entrypoint-initdb.d/
-RUN chmod +x /docker-entrypoint-initdb.d/init_db.sh
+# 初期化スクリプトのコピー
+COPY ./tools/init_db.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/init_db.sh
 
-# Set working directory
-WORKDIR /var/lib/mysql
+# データベースディレクトリの作成
+RUN mkdir -p /var/run/mysqld \
+    && chown -R mysql:mysql /var/run/mysqld \
+    && chmod 777 /var/run/mysqld
 
-# Expose MariaDB port
 EXPOSE 3306
 
-USER mysql
+ENTRYPOINT ["init_db.sh"]
 
-# Set the entry point
-ENTRYPOINT ["/docker-entrypoint-initdb.d/init_db.sh"]
-
-CMD ["mariadbd"]
+CMD ["mysqld"]
