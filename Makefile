@@ -6,6 +6,9 @@ DOCKER_COMPOSE_FILE = srcs/docker-compose.yml
 # データディレクトリのパス
 DATA_PATH = /home/$(USER)/data
 
+# コンテナ操作用のターゲット
+all: setup up
+
 # セットアップ用のターゲット
 setup:
 	@printf "Setting up directories for ${NAME}...\n"
@@ -15,9 +18,6 @@ setup:
 	@sudo chmod 777 ${DATA_PATH}/mariadb
 	@sudo chmod 777 ${DATA_PATH}/wordpress
 	@sudo chmod 777 ${DATA_PATH}/nginx
-
-# コンテナ操作用のターゲット
-all: setup up
 
 up:
 	@printf "Starting ${NAME} containers...\n"
