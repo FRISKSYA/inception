@@ -1,32 +1,43 @@
 NAME = inception
 
-all: setup up
+DOCKER_COMPOSE_FILE = srcs/docker-compose.yml
 
-setup:
-	@mkdir -p /home/${USER}/data/mariadb
+all: up
 
 up:
-	@docker-compose -f srcs/docker-compose.yml up -d
+	@printf "Starting ${NAME} containers...\n"
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
 
 down:
-	@docker-compose -f srcs/docker-compose.yml down
+	@printf "Stopping ${NAME} containers...\n"
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} down
+
+start:
+	@printf "Starting ${NAME} containers...\n"
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} start
 
 stop:
-	@docker-compose -f srcs/docker-compose.yml stop
+	@printf "Stopping ${NAME} containers...\n"
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} stop
 
-clean:
+# クリーンアップ用のターゲット
+clean: down
+	@printf "Cleaning up ${NAME} containers...\n"
 	@docker system prune -a
 
-fclean: down clean
-	@if [ $$(docker volume ls -q | wc -l) -gt 0 ]; then \
-		docker volume rm $$(docker volume ls -q) || true; \
-	fi
-	@sudo rm -rf /home/${USER}/data/mariadb/*    # ディレクトリ自体は残し、中身だけを削除
-	@sudo rmdir /home/${USER}/data/mariadb /home/${USER}/data 2>/dev/null || true  # ディレクトリが空の場合のみ削除
+fclean: clean
+	@printf "Force cleaning everything...\n"
+	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
+	@sudo rm -rf ~/data/wordpress/* 2>/dev/null || true
+	@sudo rm -rf ~/data/mariadb/* 2>/dev/null || true
 
-status:
-	@docker ps
-
+# 開発用のユーティリティターゲット
 re: fclean all
 
-.PHONY: all setup up down stop clean fclean status re
+ps:
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} ps
+
+logs:
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} logs
+
+.PHONY: all up down start stop clean fclean re ps logs
