@@ -1,0 +1,21 @@
+services:
+  mariadb:
+    build: 
+      context: ./mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception_network
+    restart: no
+
+volumes:
+  mariadb_data:
+    driver: local
+
+networks:
+  inception_network:
+    driver: bridge
