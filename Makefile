@@ -1,8 +1,23 @@
 NAME = inception
 
+# Dockerコンポーズの設定ファイル
 DOCKER_COMPOSE_FILE = srcs/docker-compose.yml
 
-all: up
+# データディレクトリのパス
+DATA_PATH = /home/$(USER)/data
+
+# セットアップ用のターゲット
+setup:
+	@printf "Setting up directories for ${NAME}...\n"
+	@sudo mkdir -p ${DATA_PATH}/mariadb
+	@sudo mkdir -p ${DATA_PATH}/wordpress
+	@sudo mkdir -p ${DATA_PATH}/nginx
+	@sudo chmod 777 ${DATA_PATH}/mariadb
+	@sudo chmod 777 ${DATA_PATH}/wordpress
+	@sudo chmod 777 ${DATA_PATH}/nginx
+
+# コンテナ操作用のターゲット
+all: setup up
 
 up:
 	@printf "Starting ${NAME} containers...\n"
@@ -28,8 +43,9 @@ clean: down
 fclean: clean
 	@printf "Force cleaning everything...\n"
 	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
-	@sudo rm -rf ~/data/wordpress/* 2>/dev/null || true
-	@sudo rm -rf ~/data/mariadb/* 2>/dev/null || true
+	@sudo rm -rf ${DATA_PATH}/wordpress/* 2>/dev/null || true
+	@sudo rm -rf ${DATA_PATH}/mariadb/* 2>/dev/null || true
+	@sudo rm -rf ${DATA_PATH}/nginx/* 2>/dev/null || true
 
 # 開発用のユーティリティターゲット
 re: fclean all
@@ -40,4 +56,4 @@ ps:
 logs:
 	@docker-compose -f ${DOCKER_COMPOSE_FILE} logs
 
-.PHONY: all up down start stop clean fclean re ps logs
+.PHONY: all setup up down start stop clean fclean re ps logs
