@@ -11,15 +11,11 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /etc/nginx/ssl
 
 # NGINXの設定ファイルをコピー
-COPY ./conf/nginx.conf.template /etc/nginx/conf.d/nginx.conf.template
+COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 # セットアップスクリプトをコピー
 COPY ./tools/setup.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/setup.sh
-
-# テスト用のHTMLファイルを作成
-RUN mkdir -p /var/www/html
-RUN echo "<!DOCTYPE html><html><body><h1>NGINX with SSL is working!</h1></body></html>" > /var/www/html/index.html
 
 # ポート443を公開
 EXPOSE 443
