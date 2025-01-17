@@ -1,0 +1,7 @@
+# [www]: php-fpmのデフォルトプール名
+# user/group: プロセスを実行するユーザーとグループ
+# listen: PHP-FPMが待ち受けるポート（NGINXと連携する際に使用）
+# pm = dynamic: プロセス管理方式（動的）
+# pm.*: プロセス数の制御設定
+# clear_env = no: 環境変数を維持
+# catch_workers_output: ワーカーの出力をログに記録
