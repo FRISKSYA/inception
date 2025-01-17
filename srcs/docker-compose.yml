@@ -10,7 +10,22 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception_network
-    restart: always
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    env_file:
+      - .env
+    ports:
+      - "443:443"
+    volumes:
+      - nginx_data:/var/www/html
+    networks:
+      - inception_network
+    restart: unless-stopped
 
 volumes:
   mariadb_data:
@@ -18,6 +33,12 @@ volumes:
     driver_opts:
       type: none
       device: /home/${USER}/data/mariadb
+      o: bind
+  nginx_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/nginx
       o: bind
 
 networks:
