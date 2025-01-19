@@ -17,11 +17,10 @@ setup:
 	@sudo mkdir -p ${DATA_PATH}/nginx
 	@sudo chmod 777 ${DATA_PATH}/mariadb
 	@sudo chmod 777 ${DATA_PATH}/wordpress
-	@sudo chmod 777 ${DATA_PATH}/nginx
 
 up:
 	@printf "Starting ${NAME} containers...\n"
-	@docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
 
 down:
 	@printf "Stopping ${NAME} containers...\n"
@@ -45,7 +44,6 @@ fclean: clean
 	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	@sudo rm -rf ${DATA_PATH}/wordpress/* 2>/dev/null || true
 	@sudo rm -rf ${DATA_PATH}/mariadb/* 2>/dev/null || true
-	@sudo rm -rf ${DATA_PATH}/nginx/* 2>/dev/null || true
 
 # 開発用のユーティリティターゲット
 re: fclean all
