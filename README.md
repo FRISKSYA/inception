@@ -9,31 +9,7 @@
 git clone <repository_url>
 ```
 
-2. 環境変数の設定
-```bash
-cp srcs/.env.example srcs/.env
-# .envファイルを編集して必要な環境変数を設定
-```
-```.env
-# MariaDB
-MYSQL_ROOT_PASSWORD=
-MYSQL_DATABASE=wordpress
-MYSQL_USER=wp_user
-MYSQL_PASSWORD=
-
-# WordPress設定
-WORDPRESS_DB_HOST=mariadb
-WORDPRESS_DB_NAME=wordpress
-WORDPRESS_URL=https://{your_intra_id}.42.fr
-WORDPRESS_ADMIN_USER=superuser
-WORDPRESS_ADMIN_PASSWORD=
-WORDPRESS_ADMIN_EMAIL=admin@example.com
-WORDPRESS_USER=editor
-WORDPRESS_USER_PASSWORD=
-WORDPRESS_USER_EMAIL=editor@example.com
-```
-
-3. ビルドと起動
+2. ビルドと起動
 ```bash
 make
 ```
