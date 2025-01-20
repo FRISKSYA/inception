@@ -14,7 +14,6 @@ setup:
 	@printf "Setting up directories for ${NAME}...\n"
 	@sudo mkdir -p ${DATA_PATH}/mariadb
 	@sudo mkdir -p ${DATA_PATH}/wordpress
-	@sudo mkdir -p ${DATA_PATH}/nginx
 	@sudo chmod 777 ${DATA_PATH}/mariadb
 	@sudo chmod 777 ${DATA_PATH}/wordpress
 
