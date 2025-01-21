@@ -1,3 +1,7 @@
+# wordpressのデータベースってどこでどうやって設定しているの？？？
+# docker-composeのボリュームの設定ってデータベースと同義？（おそらく異なる）
+# Dockerfileのデータベースのディレクトリ設定がシェルと整合とれてないかも
+
 FROM debian:bullseye
 
 # システムのアップデートとMariaDBのインストール
