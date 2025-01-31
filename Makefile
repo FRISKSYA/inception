@@ -14,12 +14,14 @@ setup:
 	@printf "Setting up directories for ${NAME}...\n"
 	@sudo mkdir -p ${DATA_PATH}/mariadb
 	@sudo mkdir -p ${DATA_PATH}/wordpress
+	@sudo chown -R ${USER}:${USER} ${DATA_PATH}
+	@sudo chmod 755 ${DATA_PATH}
 	@sudo chmod 777 ${DATA_PATH}/mariadb
 	@sudo chmod 777 ${DATA_PATH}/wordpress
 
 up:
 	@printf "Starting ${NAME} containers...\n"
-	@docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+	@docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
 
 down:
 	@printf "Stopping ${NAME} containers...\n"

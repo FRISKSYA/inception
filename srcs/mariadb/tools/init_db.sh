@@ -1,29 +1,35 @@
 #!/bin/bash
+set -x
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    # Initialize MySQL data directory
-    mysql_install_db --datadir=/var/lib/mysql
+echo "[DEBUG] Script started at $(date)" >> /tmp/init_debug.log
 
-    # Start MariaDB daemon
-    mysqld_safe &
+# 既存のデータを削除して初期化
+rm -rf /var/lib/mysql/*
+echo "[DEBUG] Starting initialization" >> /tmp/init_debug.log
 
-    # Wait for MariaDB to be ready
-    until mysqladmin ping >/dev/null 2>&1; do
-        sleep 1
-    done
+# データディレクトリの初期化
+mysql_install_db --datadir=/var/lib/mysql --user=mysql
 
-    # Create database and user using environment variables
-    mysql -u root <<EOF
-    ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-    CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-    CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-    GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
-    FLUSH PRIVILEGES;
+# MariaDB起動
+mysqld_safe &
+
+# サーバーが起動するまで待機
+until mysqladmin ping >/dev/null 2>&1; do
+    echo "[DEBUG] Waiting for MariaDB to be ready..."
+    sleep 1
+done
+
+echo "[DEBUG] Creating database and users"
+mysql -u root <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
+FLUSH PRIVILEGES;
 EOF
 
-    # Stop MariaDB daemon safely
-    mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
-fi
+# 一時的なMariaDBを停止
+mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} shutdown
 
-# Start MariaDB
+echo "[DEBUG] Starting MariaDB"
 exec mysqld
