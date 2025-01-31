@@ -10,7 +10,7 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception_network
-    restart: no
+    restart: unless-stopped
 
 volumes:
   mariadb_data:

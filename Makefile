@@ -38,7 +38,7 @@ stop:
 # クリーンアップ用のターゲット
 clean: down
 	@printf "Cleaning up ${NAME} containers...\n"
-	@docker system prune -a --force
+	@docker system prune -a
 
 fclean: clean
 	@printf "Force cleaning everything...\n"
